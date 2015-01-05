@@ -83,7 +83,10 @@ modify_rootfs()
 	fi
 
 	# Run custom commands
-	sh -c "$ROOTFS_CMDS" || __rc=101
+	if [ -n "$ROOTFS_CMDS" ]; then
+		print_green ">>> Executing custom commands ..."
+		sh -c "$ROOTFS_CMDS" || __rc=101
+	fi
 
 	# Fix auto-start symlinks for /etc/init.d scripts
 	print_green "Checking init.d scripts for newly installed services ..."
@@ -169,25 +172,26 @@ do_firmware_repack()
 
 	if [ -z "$old_romfile" -o ! -f "$old_romfile" ]; then
 		echo "*** Invalid source firmware file '$old_romfile'"
+		print_help
 		exit 1
 	fi
 	[ -z "$new_romfile" ] && new_romfile="$old_romfile.out" || :
 
 	print_green ">>> Analysing source firmware: $old_romfile ..."
 
-	# Check if firmware is in "SquashFS" type
-	local fw_magic=`cat "$old_romfile" | get_magic_word`
-	if [ "$fw_magic" != "2705" ]; then
-		echo "*** Not a valid sysupgrade firmware file."
-		exit 1
-	fi
+	#### FIXME: Do not verify SquashFS before we can cover all formats
+	#local fw_magic=`cat "$old_romfile" | get_magic_word`
+	#if [ "$fw_magic" != "2705" ]; then
+	#	echo "*** Not a valid sysupgrade firmware file."
+	#	exit 1
+	#fi
 
 	# Search for SquashFS offset
 	local squashfs_offset=`hexof 68737173 "$old_romfile"`
 	if [ -n "$squashfs_offset" ]; then
 		echo "Found SquashFS at $squashfs_offset."
 	else
-		echo "*** Cannot find SquashFS magic in firmware."
+		echo "*** Cannot find SquashFS magic in firmware. Not a valid sysupgrade image?"
 		exit 1
 	fi
 
@@ -209,9 +213,8 @@ do_firmware_repack()
 	print_green ">>> Patching the firmware ..."
 	( cd $SQUASHFS_ROOT; modify_rootfs )
 	# NOTICE: Ignore errors for "opkg install"
-	if [ $? -eq 104 ]; then
-		__rc=104
-	elif [ $? -ne 0 ]; then
+	__rc=$?
+	if [ $__rc -ne 0 -a $__rc -eq 104 ]; then
 		exit 1
 	fi
 	#######################################################
