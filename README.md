@@ -5,8 +5,14 @@ OpenWrt firmware patching and repackaging tools
 
 ### Installation
 
+    # Install required software
+    sudo apt-get install build-essential autoconf libtool liblzma-dev libglib2.0-dev  # for Ubuntu
+    ## sudo yum install gcc make autoconf libtool xz-devel glib2-devel  # for CentOS
+      
+    # Compile utilities and install
     git clone https://github.com/rssnsj/firmware-tools.git firmware-tools
     cd firmware-tools
+    make
     make install
 
 ### Usage
