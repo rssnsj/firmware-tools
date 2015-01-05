@@ -58,66 +58,48 @@ Options:
 EOF
 }
 
-opkg_exec()
-{
-	# Get system architecture on first execution
-	if [ -z "$MAJOR_ARCH" ]; then
-		MAJOR_ARCH=`cat "$SQUASHFS_ROOT"/usr/lib/opkg/status | awk -F': *' '/^Architecture:/&&$2!~/^all$/{print $2}' | sort -u | head -n1`
-	fi
-
-	IPKG_INSTROOT="$SQUASHFS_ROOT" IPKG_CONF_DIR="$SQUASHFS_ROOT"/etc IPKG_OFFLINE_ROOT="$SQUASHFS_ROOT" \
-	opkg --offline-root "$SQUASHFS_ROOT" --conf "$SQUASHFS_ROOT"/etc/opkg.conf \
-		--force-depends --force-overwrite --force-maintainer \
-		--add-dest root:/ \
-		--add-arch all:100 --add-arch $MAJOR_ARCH:200 "$@" || return $?
-}
-
 modify_rootfs()
 {
 	local __rc=0
 
-	(
-		cd $SQUASHFS_ROOT
-		# Run customized commands
-		sh -c "$ROOTFS_CMDS" || :
-	)
-
 	# Uninstall old packages
 	local ipkg
 	for ipkg in $OPKG_REMOVE_LIST; do
-		opkg_exec remove "$ipkg"
+		opkg remove "$ipkg"
 	done
-
 	# Install extra ipk packages
 	for ipkg in ipk.$MAJOR_ARCH/*.ipk ipk.$MODEL_NAME/*.ipk; do
 		[ -f "$ipkg" ] || continue
-		opkg_exec install "$ipkg" || __rc=104
+		opkg install "$ipkg" || __rc=104
 	done
 	if [ -n "$OPKG_INSTALL_LIST" ]; then
-		opkg_exec update
-		opkg_exec install $OPKG_INSTALL_LIST || __rc=104
+		opkg update || :
+		opkg install $OPKG_INSTALL_LIST || __rc=104
 	fi
+
+	# Enable wireless on first startup
+	if [ "$ENABLE_WIRELESS" = Y ]; then
+		sed -i '/option \+disabled \+1/d;/# *REMOVE THIS LINE/d' lib/wifi/mac80211.sh
+	fi
+
+	# Run custom commands
+	sh -c "$ROOTFS_CMDS" || __rc=101
 
 	# Fix auto-start symlinks for /etc/init.d scripts
 	print_green "Checking init.d scripts for newly installed services ..."
 	local initsc
-	for initsc in $SQUASHFS_ROOT/etc/init.d/*; do
+	for initsc in etc/init.d/*; do
 		local initname=`basename "$initsc"`
 		local start_no=`awk -F= '/^START=/{print $2; exit}' "$initsc"`
 		local stop_no=`awk -F= '/^STOP=/{print $2; exit}' "$initsc"`
-		if [ -n "$start_no" -o -n "$stop_no" ] && ! ls -d $SQUASHFS_ROOT/etc/rc.d/*$initname >/dev/null 2>&1; then
-			echo "Setting auto-start for '$initname' ..."
-			[ -n "$start_no" ] && ln -sf ../init.d/$initname $SQUASHFS_ROOT/etc/rc.d/S$start_no$initname || :
-			[ -n "$stop_no" ] && ln -sf ../init.d/$initname $SQUASHFS_ROOT/etc/rc.d/K$stop_no$initname || :
+		if [ -n "$start_no" -o -n "$stop_no" ] && ! ls -d etc/rc.d/*$initname >/dev/null 2>&1; then
+			echo "Setting auto-startup for '$initname' ..."
+			[ -n "$start_no" ] && ln -sf ../init.d/$initname etc/rc.d/S$start_no$initname || :
+			[ -n "$stop_no" ] && ln -sf ../init.d/$initname etc/rc.d/K$stop_no$initname || :
 		fi
 	done
 
-	# Enable wireless on first startup
-	if [ "$ENABLE_WIRELESS" = Y ]; then
-		sed -i '/option \+disabled \+1/d;/# *REMOVE THIS LINE/d' $SQUASHFS_ROOT/lib/wifi/mac80211.sh
-	fi
-
-	rm -rf $SQUASHFS_ROOT/tmp/*
+	rm -rf tmp/*
 
 	return $__rc
 }
@@ -225,25 +207,26 @@ do_firmware_repack()
 
 	#######################################################
 	print_green ">>> Patching the firmware ..."
-	# Ignore errors of "opkg install" but exits on other errors
-	if modify_rootfs; then
-		:
-	else
-		[ $? -eq 104 ] && __rc=104 || exit 1
+	( cd $SQUASHFS_ROOT; modify_rootfs )
+	# NOTICE: Ignore errors for "opkg install"
+	if [ $? -eq 104 ]; then
+		__rc=104
+	elif [ $? -ne 0 ]; then
+		exit 1
 	fi
 	#######################################################
 
 	# Rebuild SquashFS image
 	print_green ">>> Repackaging the modified firmware ..."
-
 	mksquashfs $SQUASHFS_ROOT root.squashfs -nopad -noappend -root-owned -comp xz -Xpreset 9 -Xe -Xlc 0 -Xlp 2 -Xpb 2 -b 256k -p '/dev d 755 0 0' -p '/dev/console c 600 0 0 5 1' -processors 1
 	cat uImage.bin root.squashfs > "$new_romfile"
 	padjffs2 "$new_romfile" 4 8 16 64 128 256
 
 	print_green ">>> Done. New firmware: $new_romfile"
 
+	# Copy files for rapid debugging
 	[ -d /tftpboot ] && cp -vf "$new_romfile" /tftpboot/recovery.bin
-	ln -sf "$new_romfile" recovery.bin
+	[ -L recovery.bin ] && ln -sf "$new_romfile" recovery.bin
 
 	rm -f root.squashfs* uImage.bin
 
@@ -254,7 +237,7 @@ clean_env()
 {
 	rm -f recovery.bin *.out
 	rm -f root.squashfs* uImage.bin
-	rm -rf $SQUASHFS_ROOT
+	rm -rf squashfs-root
 }
 
 case "$1" in
