@@ -31,10 +31,8 @@ OpenWrt firmware patching and repackaging tools
     >>> Extracting SquashFS into directory squashfs-root/ ...
     Parallel unsquashfs: Using 4 processors
     1488 inodes (1502 blocks) to write
-    
-    [====|                                                                                                                                                     ]   49/1502   3%
-    create_inode: could not create character device squashfs-root/dev/console, because you're not superuser!
-    [========================================================================================================================================================/ ] 1501/1502  99%
+      
+    [===============================================================================================|] 1502/1502 100%
     created 1259 files
     created 104 directories
     created 228 symlinks
@@ -43,22 +41,7 @@ OpenWrt firmware patching and repackaging tools
     >>> Patching the firmware ...
     Downloading http://downloads.openwrt.org/barrier_breaker/14.07/ramips/mt7620a/packages/base/Packages.gz.
     Inflating http://downloads.openwrt.org/barrier_breaker/14.07/ramips/mt7620a/packages/base/Packages.gz.
-    Updated list of available packages in /home/rssnsj/roms/squashfs-root//var/opkg-lists/barrier_breaker_base.
-    Downloading http://downloads.openwrt.org/barrier_breaker/14.07/ramips/mt7620a/packages/luci/Packages.gz.
-    Inflating http://downloads.openwrt.org/barrier_breaker/14.07/ramips/mt7620a/packages/luci/Packages.gz.
-    Updated list of available packages in /home/rssnsj/roms/squashfs-root//var/opkg-lists/barrier_breaker_luci.
-    Downloading http://downloads.openwrt.org/barrier_breaker/14.07/ramips/mt7620a/packages/oldpackages/Packages.gz.
-    Inflating http://downloads.openwrt.org/barrier_breaker/14.07/ramips/mt7620a/packages/oldpackages/Packages.gz.
-    Updated list of available packages in /home/rssnsj/roms/squashfs-root//var/opkg-lists/barrier_breaker_oldpackages.
-    Downloading http://downloads.openwrt.org/barrier_breaker/14.07/ramips/mt7620a/packages/packages/Packages.gz.
-    Inflating http://downloads.openwrt.org/barrier_breaker/14.07/ramips/mt7620a/packages/packages/Packages.gz.
-    Updated list of available packages in /home/rssnsj/roms/squashfs-root//var/opkg-lists/barrier_breaker_packages.
-    Downloading http://downloads.openwrt.org/barrier_breaker/14.07/ramips/mt7620a/packages/routing/Packages.gz.
-    Inflating http://downloads.openwrt.org/barrier_breaker/14.07/ramips/mt7620a/packages/routing/Packages.gz.
-    Updated list of available packages in /home/rssnsj/roms/squashfs-root//var/opkg-lists/barrier_breaker_routing.
-    Downloading http://downloads.openwrt.org/barrier_breaker/14.07/ramips/mt7620a/packages/telephony/Packages.gz.
-    Inflating http://downloads.openwrt.org/barrier_breaker/14.07/ramips/mt7620a/packages/telephony/Packages.gz.
-    Updated list of available packages in /home/rssnsj/roms/squashfs-root//var/opkg-lists/barrier_breaker_telephony.
+    ... ...
     Installing tcpdump (4.5.1-4) to root...
     Downloading http://downloads.openwrt.org/barrier_breaker/14.07/ramips/mt7620a/packages/base/tcpdump_4.5.1-4_ramips_24kec.ipk.
     Installing libpcap (1.5.3-1) to root...
@@ -71,7 +54,7 @@ OpenWrt firmware patching and repackaging tools
     Creating 4.0 filesystem on root.squashfs, block size 262144.
     Pseudo file "/dev" exists in source filesystem "/home/rssnsj/roms/squashfs-root/dev".
     Ignoring, exclude it (-e/-ef) to override.
-    [=========================================================================================================================================================|] 1281/1281 100%
+    [===============================================================================================|] 1281/1281 100%
     Exportable Squashfs 4.0 filesystem, xz compressed, data block size 262144
             compressed data, compressed metadata, compressed fragments, compressed xattrs
             duplicates are removed
