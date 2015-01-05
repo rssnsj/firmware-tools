@@ -57,30 +57,11 @@ OpenWrt firmware patching and repackaging tools
     [===============================================================================================|] 1281/1281 100%
     Exportable Squashfs 4.0 filesystem, xz compressed, data block size 262144
             compressed data, compressed metadata, compressed fragments, compressed xattrs
-            duplicates are removed
-    Filesystem size 5765.15 Kbytes (5.63 Mbytes)
-            31.05% of uncompressed filesystem size (18567.38 Kbytes)
-    Inode table size 12810 bytes (12.51 Kbytes)
-            24.24% of uncompressed inode table size (52840 bytes)
+    ... ...
     Directory table size 15678 bytes (15.31 Kbytes)
             46.62% of uncompressed directory table size (33629 bytes)
     Number of duplicate files found 9
-    Number of inodes 1600
-    Number of files 1265
-    Number of fragments 52
-    Number of symbolic links  230
-    Number of device nodes 1
-    Number of fifo nodes 0
-    Number of socket nodes 0
-    Number of directories 104
-    Number of ids (unique uids + gids) 1
-    Number of uids 1
-            root (0)
-    Number of gids 1
-            root (0)
-    padding image to 006a9000
-    padding image to 006aa000
-    padding image to 006ac000
+    ... ...
     padding image to 006b0000
     padding image to 006c0000
     >>> Done. New firmware: openwrt-ramips-mt7620a-hiwifi-hc5761-squashfs-sysupgrade.bin.out
