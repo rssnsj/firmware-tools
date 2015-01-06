@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 export SQUASHFS_ROOT=`pwd`/squashfs-root
-ENABLE_ROOT_LOGIN=Y
+ENABLE_ROOT_LOGIN=N
 ENABLE_WIRELESS=N
 OPKG_REMOVE_LIST=
 OPKG_INSTALL_LIST=
@@ -45,13 +45,13 @@ print_help()
 	local arg0=`basename "$0"`
 cat <<EOF
 Usage:
- $arg0 <major_model> <ROM_file> ...  patch firmware <ROM_file> and repackage
- $arg0 -c                            clean temporary and target files
+  $arg0 <ROM_file> [options] ...    patch firmware <ROM_file> and repackage
+  $arg0 -c                          clean temporary and target files
 
 Options:
  -o <output_file>          filename of newly built firmware
- -r <package>              remove opkg package, can be multiple
- -i <ipk_file>             install package with ipk file path or URL, can be multiple
+ -r <package>              remove opkg package (can be multiple)
+ -i <package>              install package with ipk file path or URL (can be multiple)
  -e                        enable root login
  -w                        enable wireless by default
  -x <commands>             execute commands after all other operations
@@ -80,6 +80,16 @@ modify_rootfs()
 	# Enable wireless on first startup
 	if [ "$ENABLE_WIRELESS" = Y ]; then
 		sed -i '/option \+disabled \+1/d;/# *REMOVE THIS LINE/d' lib/wifi/mac80211.sh
+	fi
+
+	# Root the firmware (only for the HCxxxx ROMs)
+	if [ "$ENABLE_ROOT_LOGIN" = Y ]; then
+		# Hack this line: 'sed -i "/login/d" /etc/inittab'
+		[ -f lib/functions/system.sh ] && sed -i '/sed.*\/login\/d.*inittab/d' lib/functions/system.sh || :
+		if ! ls etc/rc.d/S*dropbear &>/dev/null; then
+			ln -sv ../init.d/dropbear etc/rc.d/S50dropbear
+		fi
+		print_red "WARNING: Enabled root login permanently for the firmware."
 	fi
 
 	# Run custom commands

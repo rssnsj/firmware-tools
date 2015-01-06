@@ -17,16 +17,16 @@ OpenWrt firmware patching and repackaging tools
 
 ### Usage
 
-     openwrt-repack.sh <major_model> <ROM_file> ...  patch firmware <ROM_file> and repackage
-     openwrt-repack.sh -c                            clean temporary and target files
+     openwrt-repack.sh <ROM_file> [options] ...    patch firmware <ROM_file> and repackage
+     openwrt-repack.sh -c                          clean temporary and target files
      
     Options:
-    -o <output_file>          filename of newly built firmware
-    -r <package>              remove opkg package, can be multiple
-    -i <ipk_file>             install package with ipk file path or URL, can be multiple
-    -e                        enable root login
-    -w                        enable wireless by default
-    -x <commands>             execute commands after all other operations
+     -o <output_file>          filename of newly built firmware
+     -r <package>              remove opkg package (can be multiple)
+     -i <package>              install package with ipk file path or URL (can be multiple)
+     -e                        enable root login
+     -w                        enable wireless by default
+     -x <commands>             execute commands after all other operations
 
 ### Example
 
