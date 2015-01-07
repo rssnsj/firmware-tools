@@ -98,17 +98,26 @@ modify_rootfs()
 		sh -c "$ROOTFS_CMDS" || __rc=101
 	fi
 
-	# Fix auto-start symlinks for /etc/init.d scripts
-	print_green "Checking init.d scripts for newly installed services ..."
+	# Fix rc.d symbolic links for /etc/init.d scripts
+	print_green "Checking rc.d links for changed services ..."
 	local initsc
 	for initsc in etc/init.d/*; do
 		local initname=`basename "$initsc"`
 		local start_no=`awk -F= '/^START=/{print $2; exit}' "$initsc"`
 		local stop_no=`awk -F= '/^STOP=/{print $2; exit}' "$initsc"`
 		if [ -n "$start_no" -o -n "$stop_no" ] && ! ls -d etc/rc.d/*$initname >/dev/null 2>&1; then
-			echo "Setting auto-startup for '$initname' ..."
+			echo "Creating rc.d links for '/$initsc' ..."
 			[ -n "$start_no" ] && ln -sf ../init.d/$initname etc/rc.d/S$start_no$initname || :
 			[ -n "$stop_no" ] && ln -sf ../init.d/$initname etc/rc.d/K$stop_no$initname || :
+		fi
+	done
+	local rcdsc
+	for rcdsc in etc/rc.d/S* etc/rc.d/K*; do
+		local initsc=`readlink "$rcdsc"`
+		local initname=`basename "$initsc"`
+		if [ ! -f etc/init.d/"$initname" ]; then
+			echo "Deleting stale rc.d link '/$rcdsc' ..."
+			rm -f "$rcdsc"
 		fi
 	done
 
