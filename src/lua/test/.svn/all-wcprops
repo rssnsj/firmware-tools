@@ -1,0 +1,125 @@
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/hiwifi/!svn/ver/7840/tools/firmware-merger/src/lua/test
+END
+fibfor.lua
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/hiwifi/!svn/ver/7840/tools/firmware-merger/src/lua/test/fibfor.lua
+END
+bisect.lua
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/hiwifi/!svn/ver/7840/tools/firmware-merger/src/lua/test/bisect.lua
+END
+sieve.lua
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/hiwifi/!svn/ver/7840/tools/firmware-merger/src/lua/test/sieve.lua
+END
+xd.lua
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/hiwifi/!svn/ver/7840/tools/firmware-merger/src/lua/test/xd.lua
+END
+readonly.lua
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/hiwifi/!svn/ver/7840/tools/firmware-merger/src/lua/test/readonly.lua
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/hiwifi/!svn/ver/7840/tools/firmware-merger/src/lua/test/README
+END
+echo.lua
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/hiwifi/!svn/ver/7840/tools/firmware-merger/src/lua/test/echo.lua
+END
+life.lua
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/hiwifi/!svn/ver/7840/tools/firmware-merger/src/lua/test/life.lua
+END
+trace-globals.lua
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/hiwifi/!svn/ver/7840/tools/firmware-merger/src/lua/test/trace-globals.lua
+END
+globals.lua
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/hiwifi/!svn/ver/7840/tools/firmware-merger/src/lua/test/globals.lua
+END
+luac.lua
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/hiwifi/!svn/ver/7840/tools/firmware-merger/src/lua/test/luac.lua
+END
+sort.lua
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/hiwifi/!svn/ver/7840/tools/firmware-merger/src/lua/test/sort.lua
+END
+table.lua
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/hiwifi/!svn/ver/7840/tools/firmware-merger/src/lua/test/table.lua
+END
+env.lua
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/hiwifi/!svn/ver/7840/tools/firmware-merger/src/lua/test/env.lua
+END
+cf.lua
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/hiwifi/!svn/ver/7840/tools/firmware-merger/src/lua/test/cf.lua
+END
+trace-calls.lua
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/hiwifi/!svn/ver/7840/tools/firmware-merger/src/lua/test/trace-calls.lua
+END
+fib.lua
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/hiwifi/!svn/ver/7840/tools/firmware-merger/src/lua/test/fib.lua
+END
+printf.lua
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/hiwifi/!svn/ver/7840/tools/firmware-merger/src/lua/test/printf.lua
+END
+hello.lua
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/hiwifi/!svn/ver/7840/tools/firmware-merger/src/lua/test/hello.lua
+END
+factorial.lua
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/hiwifi/!svn/ver/7840/tools/firmware-merger/src/lua/test/factorial.lua
+END

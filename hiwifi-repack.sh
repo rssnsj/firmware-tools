@@ -1,8 +1,16 @@
 #!/bin/bash -e
 
+SHAREFILE_DIR=/usr/share/firmware-merger
+
+export MODEL_NAME=
+export MAJOR_ARCH=
+export SUBMODEL=
+export KERNEL_OFFSET_64K=
+export SQUASHFS_OFFSET_64K=
 export SQUASHFS_ROOT=`pwd`/squashfs-root
-ENABLE_ROOT_LOGIN=N
-ENABLE_WIRELESS=N
+export ENABLE_ROOT_LOGIN=N
+export UNLOCK_UBOOT=N
+export STRIP_UBOOT=N
 OPKG_REMOVE_LIST=
 OPKG_INSTALL_LIST=
 ROOTFS_CMDS=
@@ -45,15 +53,17 @@ print_help()
 	local arg0=`basename "$0"`
 cat <<EOF
 Usage:
-  $arg0 <ROM_file> [options] ...    patch firmware <ROM_file> and repackage
-  $arg0 -c                          clean temporary and target files
+ $arg0 <major_model> <ROM_file> ...  patch firmware <ROM_file> and repackage
+ $arg0 -c                            clean temporary and target files
 
 Options:
  -o <output_file>          filename of newly built firmware
+ -s <sub_model>            specify a sub model name
  -r <package>              remove opkg package (can be multiple)
  -i <package>              install package with ipk file path or URL (can be multiple)
  -e                        enable root login
- -w                        enable wireless by default
+ -u                        unlock U-boot by replacing with an old version
+ -U                        strip U-boot from firmware (plain 'sysupgrade' format)
  -x <commands>             execute commands after all other operations
 EOF
 }
@@ -82,8 +92,21 @@ modify_rootfs()
 		sed -i '/option \+disabled \+1/d;/# *REMOVE THIS LINE/d' lib/wifi/mac80211.sh
 	fi
 
-	# Root the firmware (only for the HCxxxx ROMs)
+	# Write sub model info
+	if [ -n "$SUBMODEL" ]; then
+		local __model="$MODEL_NAME-$SUBMODEL"
+		print_red "WARNING: New firmware model will be '$__model'."
+		echo "$SUBMODEL" > etc/.submodel
+	fi
+
+	# Root the firmware
 	if [ "$ENABLE_ROOT_LOGIN" = Y ]; then
+		if ! grep 'tty[SA]' etc/inittab &>/dev/null; then
+			case "$MAJOR_ARCH" in
+				ar71xx) echo 'ttyATH0::askfirst:/bin/ash --login' >> etc/inittab;;
+				ralink) echo 'ttyS1::askfirst:/bin/ash --login' >> etc/inittab;;
+			esac
+		fi
 		# Hack this line: 'sed -i "/login/d" /etc/inittab'
 		[ -f lib/functions/system.sh ] && sed -i '/sed.*\/login\/d.*inittab/d' lib/functions/system.sh || :
 		if ! ls etc/rc.d/S*dropbear &>/dev/null; then
@@ -130,12 +153,15 @@ do_firmware_repack()
 {
 	local old_romfile=
 	local new_romfile=
-	local __rc=0
 
 	# Parse options and parameters
 	local opt
 	while [ $# -gt 0 ]; do
 		case "$1" in
+			-s)
+				shift 1
+				SUBMODEL="$1"
+				;;
 			-o)
 				shift 1
 				new_romfile="$1"
@@ -148,22 +174,32 @@ do_firmware_repack()
 				shift 1
 				OPKG_INSTALL_LIST="$OPKG_INSTALL_LIST$1 "
 				;;
+			-u)
+				UNLOCK_UBOOT=Y
+				;;
+			-U)
+				STRIP_UBOOT=Y
+				;;
 			-e)
 				ENABLE_ROOT_LOGIN=Y
-				;;
-			-w)
-				ENABLE_WIRELESS=Y
+				UNLOCK_UBOOT=Y
 				;;
 			-x)
 				shift 1
 				ROOTFS_CMDS="$1"
+				;;
+			-h|--help)
+				print_help
+				exit 0
 				;;
 			-*)
 				echo "*** Unknown option '$1'."
 				exit 1
 				;;
 			*)
-				if [ -z "$old_romfile" ]; then
+				if [ -z "$MODEL_NAME" ]; then
+					MODEL_NAME=`echo "$1" | tr '[a-z]' '[A-Z]'`
+				elif [ -z "$old_romfile" ]; then
 					old_romfile="$1"
 				else
 					echo "*** Useless parameter: $1".
@@ -173,6 +209,21 @@ do_firmware_repack()
 		esac
 		shift 1
 	done
+
+	case "$MODEL_NAME" in
+		HC6361|HC6341)
+			MAJOR_ARCH=ar71xx; KERNEL_OFFSET_64K=2
+			;;
+		HC5761|HC5661|HC5663)
+			MAJOR_ARCH=ralink; KERNEL_OFFSET_64K=5
+			;;
+		"")
+			print_help; exit 1
+			;;
+		*)
+			echo "*** Unsupported model: $MODEL_NAME."; exit 1
+			;;
+	esac
 
 
 	# Download file if the filename starts with "http*://"
@@ -198,30 +249,48 @@ do_firmware_repack()
 
 	print_green ">>> Analysing source firmware: $old_romfile ..."
 
-	#### FIXME: Do not verify SquashFS before we can cover all formats
-	#local fw_magic=`cat "$old_romfile" | get_magic_word`
-	#if [ "$fw_magic" != "2705" ]; then
-	#	echo "*** Not a valid sysupgrade firmware file."
-	#	exit 1
-	#fi
+	# Check if firmware is in "SquashFS" type
+	local fw_magic=`cat "$old_romfile" | get_magic_word`
+	if [ "$fw_magic" = "2705" ]; then
+		echo ""
+		echo "***************************************************"
+		echo "*** WARNING: Firmware is SquashFS without u-boot."
+		echo "***************************************************"
+		echo ""
+		#
+		KERNEL_OFFSET_64K=0
+		cp -f $SHAREFILE_DIR/$MODEL_NAME-oemparts.bin $MODEL_NAME-oemparts.bin
+	else
+		if [ "$UNLOCK_UBOOT" = Y ]; then
+			print_red "WARNING: Replacing U-boot with unlocked version."
+			cp -f $SHAREFILE_DIR/$MODEL_NAME-oemparts.bin $MODEL_NAME-oemparts.bin
+		else
+			dd if="$old_romfile" bs=64k count=$KERNEL_OFFSET_64K > $MODEL_NAME-oemparts.bin
+		fi
+	fi
 
 	# Search for SquashFS offset
-	local squashfs_offset=`hexof 68737173 "$old_romfile"`
-	if [ -n "$squashfs_offset" ]; then
-		echo "Found SquashFS at $squashfs_offset."
-	else
-		echo "*** Cannot find SquashFS magic in firmware. Not a valid sysupgrade image?"
+	local __offset_64k=`expr $KERNEL_OFFSET_64K + 8`
+	while [ $__offset_64k -lt 32 ]; do
+		local __magic=`dd if="$old_romfile" bs=64k skip=$__offset_64k count=1 2>/dev/null | get_magic_long`
+		if [ "$__magic" = 68737173 ]; then
+			SQUASHFS_OFFSET_64K=$__offset_64k
+			echo "Found SquashFS at 64k * $__offset_64k."
+			break
+		fi
+		__offset_64k=`expr $__offset_64k + 1`
+	done
+	if [ -z "$SQUASHFS_OFFSET_64K" ]; then
+		echo "*** Cannot find SquashFS offset in firmware."
 		exit 1
 	fi
 
 	print_green ">>> Extracting kernel, rootfs partitions ..."
 
 	# Partition: kernel
-	# dd if="$old_romfile" bs=1 count=$squashfs_offset > uImage.bin
-	head "$old_romfile" -c$squashfs_offset > uImage.bin
+	dd if="$old_romfile" bs=64k skip=$KERNEL_OFFSET_64K count=`expr $SQUASHFS_OFFSET_64K - $KERNEL_OFFSET_64K` > $MODEL_NAME-uImage.bin
 	# Partition: rootfs
-	# dd if="$old_romfile" bs=1 skip=$squashfs_offset > root.squashfs.orig
-	tail "$old_romfile" -c+`expr $squashfs_offset + 1` > root.squashfs.orig
+	dd if="$old_romfile" bs=64k skip=$SQUASHFS_OFFSET_64K > root.squashfs.orig
 
 	print_green ">>> Extracting SquashFS into directory squashfs-root/ ..."
 	# Extract the file system, to squashfs-root/
@@ -230,18 +299,20 @@ do_firmware_repack()
 
 	#######################################################
 	print_green ">>> Patching the firmware ..."
-	( cd $SQUASHFS_ROOT; modify_rootfs )
-	# NOTICE: Ignore errors for "opkg install"
-	__rc=$?
-	if [ $__rc -ne 0 -a $__rc -eq 104 ]; then
-		exit 1
-	fi
+	( cd $SQUASHFS_ROOT; modify_rootfs )  # exits on error since 'bash -e' was used
 	#######################################################
 
 	# Rebuild SquashFS image
 	print_green ">>> Repackaging the modified firmware ..."
-	mksquashfs $SQUASHFS_ROOT root.squashfs -nopad -noappend -root-owned -comp xz -Xpreset 9 -Xe -Xlc 0 -Xlp 2 -Xpb 2 -b 256k -p '/dev d 755 0 0' -p '/dev/console c 600 0 0 5 1' -processors 1
-	cat uImage.bin root.squashfs > "$new_romfile"
+	mksquashfs $SQUASHFS_ROOT root.squashfs -nopad -noappend -root-owned -comp xz -Xpreset 9 -Xe -Xlc 0 -Xlp 2 -Xpb 2 -b 256k -processors 1
+
+	if [ "$STRIP_UBOOT" = Y ]; then
+		print_red "WARNING: Firmware is being rebuilt without U-boot."
+		cat $MODEL_NAME-uImage.bin root.squashfs > "$new_romfile"
+	else
+		cat $MODEL_NAME-oemparts.bin $MODEL_NAME-uImage.bin root.squashfs > "$new_romfile"
+	fi
+
 	padjffs2 "$new_romfile" 4 8 16 64 128 256
 
 	print_green ">>> Done. New firmware: $new_romfile"
@@ -250,15 +321,15 @@ do_firmware_repack()
 	[ -d /tftpboot ] && cp -vf "$new_romfile" /tftpboot/recovery.bin
 	[ -L recovery.bin ] && ln -sf "$new_romfile" recovery.bin
 
-	rm -f root.squashfs* uImage.bin
+	rm -f root.squashfs* *-uImage.bin $MODEL_NAME-oemparts.bin
 
-	exit $__rc
+	exit 0
 }
 
 clean_env()
 {
 	rm -f recovery.bin *.out
-	rm -f root.squashfs* uImage.bin
+	rm -f root.squashfs* *-uImage.bin
 	rm -rf squashfs-root
 }
 
