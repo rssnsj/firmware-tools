@@ -14,7 +14,6 @@ case "$1" in
 	*) echo "*** Unable to determine model type of this firmware. Please specify model name in arguments before file name."; exit 1;;
 esac
 
-
 hiwifi-repack.sh -e -x "
 set -e
 opkg install '${U}autossh_1.4b-20140307.1_ralink.ipk'
