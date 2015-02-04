@@ -27,4 +27,5 @@ install: all
 	install -m755 hiwifi-repack.sh /usr/bin/
 	mkdir -p /usr/share/firmware-merger
 	cp -f *-oemparts.bin /usr/share/firmware-merger/
+	install -m755 scripts/*.sh /usr/bin/
 
