@@ -23,9 +23,8 @@ opkg_exec()
 	IPKG_INSTROOT="$squashfs_root" IPKG_CONF_DIR="$squashfs_root"/etc IPKG_OFFLINE_ROOT="$squashfs_root" \
 	exec opkg-cl --offline-root "$squashfs_root" --conf "$squashfs_root"/tmp/opkg.conf \
 		--force-overwrite --force-maintainer \
-		--add-dest root:/ \
 		--add-arch all:100 --add-arch $major_arch:200 "$@"
-	## --force-depends
+	## --force-depends --add-dest root:/
 }
 
 opkg_exec "$@"
