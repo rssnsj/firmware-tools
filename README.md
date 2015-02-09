@@ -1,7 +1,7 @@
 firmware-tools
 ==============
 
-OpenWrt firmware patching and repackaging tools
+OpenWrt firmware patching and repackaging tools - HiWiFi only
 
 ### Installation
 
@@ -10,28 +10,27 @@ OpenWrt firmware patching and repackaging tools
     ## sudo yum install gcc make autoconf libtool xz-devel glib2-devel  # for CentOS
       
     # Compile utilities and install
-    git clone https://github.com/rssnsj/firmware-tools.git firmware-tools
-    cd firmware-tools
+    git clone https://github.com/rssnsj/firmware-tools.git hiwifi-tools -b hiwifi
+    cd hiwifi-tools
     make
     make install
 
 ### Usage
 
-     openwrt-repack.sh <ROM_file> [options] ...    patch firmware <ROM_file> and repackage
-     openwrt-repack.sh -c                          clean temporary and target files
+     hiwifi-repack.sh <ROM_file> [options] ...    patch firmware <ROM_file> and repackage
+     hiwifi-repack.sh -c                          clean temporary and target files
      
     Options:
      -o <output_file>          filename of newly built firmware
      -r <package>              remove opkg package (can be multiple)
      -i <package>              install package with ipk file path or URL (can be multiple)
      -e                        enable root login
-     -w                        enable wireless by default
      -x <commands>             execute commands after all other operations
 
 ### Example
 
-    rssnsj@precise-vmx:~/roms$ openwrt-repack.sh openwrt-ramips-mt7620a-hiwifi-hc5761-squashfs-sysupgrade.bin -w -e -i tcpdump
-    >>> Analysing source firmware: openwrt-ramips-mt7620a-hiwifi-hc5761-squashfs-sysupgrade.bin ...
+    rssnsj@precise-vmx:~/roms$ hiwifi-repack.sh HC5761-xxxx.bin -e -i tcpdump
+    >>> Analysing source firmware: HC5761-xxxx.bin ...
     Found SquashFS at 1077084.
     >>> Extracting kernel, rootfs partitions ...
     >>> Extracting SquashFS into directory squashfs-root/ ...
@@ -70,5 +69,5 @@ OpenWrt firmware patching and repackaging tools
     ... ...
     padding image to 006b0000
     padding image to 006c0000
-    >>> Done. New firmware: openwrt-ramips-mt7620a-hiwifi-hc5761-squashfs-sysupgrade.bin.out
+    >>> Done. New firmware: HC5761-xxxx.bin.out
     rssnsj@precise-vmx:~/roms$
