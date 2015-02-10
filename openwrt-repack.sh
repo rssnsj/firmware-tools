@@ -45,8 +45,8 @@ print_help()
 	local arg0=`basename "$0"`
 cat <<EOF
 Usage:
-  $arg0 <ROM_file> [options] ...    patch firmware <ROM_file> and repackage
-  $arg0 -c                          clean temporary and target files
+ $arg0 <ROM_file> [options] ...    patch firmware <ROM_file> and repackage
+ $arg0 -c                          clean temporary and target files
 
 Options:
  -o <output_file>          filename of newly built firmware
@@ -156,7 +156,8 @@ do_firmware_repack()
 				;;
 			-x)
 				shift 1
-				ROOTFS_CMDS="$1"
+				ROOTFS_CMDS="$ROOTFS_CMDS$1
+"
 				;;
 			-*)
 				echo "*** Unknown option '$1'."
