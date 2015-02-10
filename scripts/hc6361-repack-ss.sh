@@ -8,7 +8,8 @@ get_ss_firmware_name()
 
 # --------------------------------------------------
 
-[ -z "$U" ] && U="http://v.rssn.cn/HC6361/packages/"
+[ -z "$U" ] && U="http://rssn.cn/network-feeds/hc6361/"
+
 case "$U" in
 	*/) : ;;
 	*) U="$U/" ;;
