@@ -186,7 +186,8 @@ do_firmware_repack()
 				;;
 			-x)
 				shift 1
-				ROOTFS_CMDS="$1"
+				ROOTFS_CMDS="$ROOTFS_CMDS$1
+"
 				;;
 			-h|--help)
 				print_help
