@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 ENABLE_ROOT_LOGIN=N
 ENABLE_WIRELESS=N
@@ -238,13 +238,15 @@ do_firmware_repack()
 	#######################################################
 	print_green ">>> Patching the firmware ..."
 	rm -rf /tmp/opkg-lists
-	( cd $rootfs_root; modify_rootfs )
-	# NOTICE: Ignore errors for "opkg install"
-	__rc=$?
-	if [ "$IGNORE_MODIFY_ERRORS" = Y ]; then
+	if ( cd $rootfs_root; modify_rootfs ); then
 		__rc=0
-	elif [ $__rc -ne 0 -a $__rc -eq 104 ]; then
-		exit 1
+	else
+		__rc=$?
+		if [ "$IGNORE_MODIFY_ERRORS" = Y ]; then
+			__rc=0
+		elif [ $__rc -ne 0 -a $__rc -eq 104 ]; then
+			exit 1
+		fi
 	fi
 	#######################################################
 
