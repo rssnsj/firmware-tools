@@ -1,16 +1,15 @@
 #!/bin/bash -e
 
-SHAREFILE_DIR=/usr/share/firmware-merger
+SHAREFILE_DIR=/usr/share/hiwifi-repack
 
 export MODEL_NAME=
 export MAJOR_ARCH=
 export SUBMODEL=
-export KERNEL_OFFSET_64K=
-export SQUASHFS_OFFSET_64K=
-export SQUASHFS_ROOT=`pwd`/squashfs-root
-export ENABLE_ROOT_LOGIN=N
-export UNLOCK_UBOOT=N
-export STRIP_UBOOT=N
+KERNEL_OFFSET_64K=
+SQUASHFS_OFFSET_64K=
+ENABLE_ROOT_LOGIN=N
+UNLOCK_UBOOT=N
+STRIP_UBOOT=N
 OPKG_REMOVE_LIST=
 OPKG_INSTALL_LIST=
 ROOTFS_CMDS=
@@ -295,17 +294,19 @@ do_firmware_repack()
 
 	print_green ">>> Extracting SquashFS into directory squashfs-root/ ..."
 	# Extract the file system, to squashfs-root/
-	rm -rf $SQUASHFS_ROOT
+	rm -rf squashfs-root
 	unsquashfs root.squashfs.orig
+	local rootfs_root=squashfs-root
 
 	#######################################################
 	print_green ">>> Patching the firmware ..."
-	( cd $SQUASHFS_ROOT; modify_rootfs )  # exits on error since 'bash -e' was used
+	rm -rf /tmp/opkg-lists
+	( cd $rootfs_root; modify_rootfs )  # exits on error since 'bash -e' was used
 	#######################################################
 
 	# Rebuild SquashFS image
 	print_green ">>> Repackaging the modified firmware ..."
-	mksquashfs $SQUASHFS_ROOT root.squashfs -nopad -noappend -root-owned -comp xz -Xpreset 9 -Xe -Xlc 0 -Xlp 2 -Xpb 2 -b 256k -processors 1
+	mksquashfs $rootfs_root root.squashfs -nopad -noappend -root-owned -comp xz -Xpreset 9 -Xe -Xlc 0 -Xlp 2 -Xpb 2 -b 256k -processors 1
 
 	if [ "$STRIP_UBOOT" = Y ]; then
 		print_red "WARNING: Firmware is being rebuilt without U-boot."
@@ -322,7 +323,8 @@ do_firmware_repack()
 	[ -d /tftpboot ] && cp -vf "$new_romfile" /tftpboot/recovery.bin
 	[ -L recovery.bin ] && ln -sf "$new_romfile" recovery.bin
 
-	rm -f root.squashfs* *-uImage.bin $MODEL_NAME-oemparts.bin
+	rm -f root.squashfs* *-uImage.bin *-oemparts.bin
+	rm -rf $rootfs_root /tmp/opkg-lists
 
 	exit 0
 }
@@ -330,7 +332,8 @@ do_firmware_repack()
 clean_env()
 {
 	rm -f recovery.bin *.out
-	rm -f root.squashfs* *-uImage.bin
+	rm -f root.squashfs* *-uImage.bin *-oemparts.bin
+	rm -rf $rootfs_root /tmp/opkg-lists
 	rm -rf squashfs-root
 }
 

@@ -22,7 +22,7 @@ install: all
 	install -m755 src/opkg.sh /usr/bin/opkg
 	install -m755 src/lua/src/luac /usr/bin/
 	install -m755 hiwifi-repack.sh /usr/bin/
-	mkdir -p /usr/share/firmware-merger
-	cp -f *-oemparts.bin /usr/share/firmware-merger/
+	mkdir -p /usr/share/hiwifi-repack
+	cp -f *-oemparts.bin /usr/share/hiwifi-repack/
 	install -m755 scripts/*.sh /usr/bin/
 
