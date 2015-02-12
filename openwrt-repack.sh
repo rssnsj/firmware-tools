@@ -1,8 +1,8 @@
-#!/bin/bash -e
+#!/bin/bash
 
-export SQUASHFS_ROOT=`pwd`/squashfs-root
 ENABLE_ROOT_LOGIN=N
 ENABLE_WIRELESS=N
+IGNORE_MODIFY_ERRORS=N
 OPKG_REMOVE_LIST=
 OPKG_INSTALL_LIST=
 ROOTFS_CMDS=
@@ -55,6 +55,7 @@ Options:
  -e                        enable root login
  -w                        enable wireless by default
  -x <commands>             execute commands after all other operations
+ -F                        ignore errors during modification
 EOF
 }
 
@@ -154,6 +155,9 @@ do_firmware_repack()
 			-w)
 				ENABLE_WIRELESS=Y
 				;;
+			-F)
+				IGNORE_MODIFY_ERRORS=Y
+				;;
 			-x)
 				shift 1
 				ROOTFS_CMDS="$ROOTFS_CMDS$1
@@ -226,22 +230,27 @@ do_firmware_repack()
 
 	print_green ">>> Extracting SquashFS into directory squashfs-root/ ..."
 	# Extract the file system, to squashfs-root/
-	rm -rf $SQUASHFS_ROOT
+	rm -rf squashfs-root
 	unsquashfs root.squashfs.orig
+	local rootfs_root=squashfs-root
+	#mv squashfs-root $rootfs_root
 
 	#######################################################
 	print_green ">>> Patching the firmware ..."
-	( cd $SQUASHFS_ROOT; modify_rootfs )
+	rm -rf /tmp/opkg-lists
+	( cd $rootfs_root; modify_rootfs )
 	# NOTICE: Ignore errors for "opkg install"
 	__rc=$?
-	if [ $__rc -ne 0 -a $__rc -eq 104 ]; then
+	if [ "$IGNORE_MODIFY_ERRORS" = Y ]; then
+		__rc=0
+	elif [ $__rc -ne 0 -a $__rc -eq 104 ]; then
 		exit 1
 	fi
 	#######################################################
 
 	# Rebuild SquashFS image
 	print_green ">>> Repackaging the modified firmware ..."
-	mksquashfs $SQUASHFS_ROOT root.squashfs -nopad -noappend -root-owned -comp xz -Xpreset 9 -Xe -Xlc 0 -Xlp 2 -Xpb 2 -b 256k -p '/dev d 755 0 0' -p '/dev/console c 600 0 0 5 1' -processors 1
+	mksquashfs $rootfs_root root.squashfs -nopad -noappend -root-owned -comp xz -Xpreset 9 -Xe -Xlc 0 -Xlp 2 -Xpb 2 -b 256k -p '/dev d 755 0 0' -p '/dev/console c 600 0 0 5 1' -processors 1
 	cat uImage.bin root.squashfs > "$new_romfile"
 	padjffs2 "$new_romfile" 4 8 16 64 128 256
 
@@ -252,6 +261,7 @@ do_firmware_repack()
 	[ -L recovery.bin ] && ln -sf "$new_romfile" recovery.bin
 
 	rm -f root.squashfs* uImage.bin
+	rm -rf $rootfs_root /tmp/opkg-lists
 
 	exit $__rc
 }
