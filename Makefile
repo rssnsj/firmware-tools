@@ -24,7 +24,7 @@ install: all
 	install -m755 src/opkg.sh /usr/bin/opkg
 	install -m755 src/lua/src/luac /usr/bin/
 	install -m755 hiwifi-repack.sh /usr/bin/
+	install -m755 scripts/*.sh /usr/bin/
 	mkdir -p $(LIBRARY_DIR)
 	cp -f *-oemparts.bin $(LIBRARY_DIR)
-	cp -f scripts/*.sh $(LIBRARY_DIR)/
 
