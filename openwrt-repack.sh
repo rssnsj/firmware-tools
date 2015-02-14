@@ -266,8 +266,8 @@ do_firmware_repack()
 		__rc=$?
 		if [ "$IGNORE_MODIFY_ERRORS" = Y ]; then
 			__rc=0
-		elif [ $__rc -ne 0 -a $__rc -eq 104 ]; then
-			exit 1
+		elif [ $__rc -ne 0 ]; then
+			exit $__rc
 		fi
 	fi
 	#######################################################
