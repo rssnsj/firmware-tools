@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-SHAREFILE_DIR=/usr/share/hiwifi-repack
+LIBRARY_DIR=/usr/lib/hiwifi-repack
 
 export MODEL_NAME=
 export MAJOR_ARCH=
@@ -259,11 +259,11 @@ do_firmware_repack()
 		echo ""
 		#
 		KERNEL_OFFSET_64K=0
-		cp -f $SHAREFILE_DIR/$MODEL_NAME-oemparts.bin $MODEL_NAME-oemparts.bin
+		cp -f $LIBRARY_DIR/$MODEL_NAME-oemparts.bin $MODEL_NAME-oemparts.bin
 	else
 		if [ "$UNLOCK_UBOOT" = Y ]; then
 			print_red "WARNING: Replacing U-boot with unlocked version."
-			cp -f $SHAREFILE_DIR/$MODEL_NAME-oemparts.bin $MODEL_NAME-oemparts.bin
+			cp -f $LIBRARY_DIR/$MODEL_NAME-oemparts.bin $MODEL_NAME-oemparts.bin
 		else
 			dd if="$old_romfile" bs=64k count=$KERNEL_OFFSET_64K > $MODEL_NAME-oemparts.bin
 		fi
