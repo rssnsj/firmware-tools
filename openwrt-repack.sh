@@ -60,20 +60,21 @@ Options:
  -F                        ignore errors during modification
 
 Predefined commands:
+
 EOF
 
 	local sc
 	for sc in $LIBRARY_DIR/*.sh; do
 		[ -f "$sc" ] || continue
 		cat <<EOF
-openwrt-repack.sh -w -x 'bash $sc' <file_or_url>
+$arg0 -w -x 'bash $sc' <file_or_url>
 
 EOF
 		local romfile
 		cat $sc | awk -F= '/^SOURCE_FIRMWARE[^=]*=/{print $2}' | sed "s/^[\"']//;s/[\"']\$//" |
 		while read romfile; do
 			cat <<EOF
-openwrt-repack.sh -w -x 'bash $sc' '$romfile'
+$arg0 -w -x 'bash $sc' '$romfile'
 
 EOF
 		done
