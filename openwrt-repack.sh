@@ -1,5 +1,7 @@
 #!/bin/bash -e
 
+LIBRARY_DIR=/usr/lib/openwrt-repack
+
 ENABLE_ROOT_LOGIN=N
 ENABLE_WIRELESS=N
 IGNORE_MODIFY_ERRORS=N
@@ -56,7 +58,26 @@ Options:
  -w                        enable wireless by default
  -x <commands>             execute commands after all other operations
  -F                        ignore errors during modification
+
+Predefined commands:
 EOF
+
+	local sc
+	for sc in $LIBRARY_DIR/*.sh; do
+		[ -f "$sc" ] || continue
+		cat <<EOF
+openwrt-repack.sh -w -x 'bash $sc' <file_or_url>
+
+EOF
+		local romfile
+		cat $sc | awk -F= '/^SOURCE_FIRMWARE[^=]*=/{print $2}' | sed "s/^[\"']//;s/[\"']\$//" |
+		while read romfile; do
+			cat <<EOF
+openwrt-repack.sh -w -x 'bash $sc' '$romfile'
+
+EOF
+		done
+	done
 }
 
 modify_rootfs()
@@ -272,6 +293,7 @@ clean_env()
 {
 	rm -f recovery.bin *.out
 	rm -f root.squashfs* uImage.bin
+	rm -rf $rootfs_root /tmp/opkg-lists
 	rm -rf squashfs-root
 }
 
