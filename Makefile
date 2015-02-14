@@ -28,5 +28,5 @@ install: all
 	install -m755 src/hexof/hexof /usr/bin/
 	install -m755 openwrt-repack.sh /usr/bin/
 	mkdir -p $(LIBRARY_DIR)
-	cp -f scripts/*.sh $(LIBRARY_DIR)/
+	install -m755 scripts/*.sh $(LIBRARY_DIR)/
 
