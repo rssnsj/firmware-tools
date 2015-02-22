@@ -25,5 +25,5 @@ install: all
 	install -m755 hiwifi-repack.sh /usr/bin/
 	install -m755 scripts/*.sh /usr/bin/
 	mkdir -p $(LIBRARY_DIR)
-	cp -f *-oemparts.bin $(LIBRARY_DIR)
+	cp -f *-uboot.bin $(LIBRARY_DIR)
 

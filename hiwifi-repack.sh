@@ -5,6 +5,7 @@ LIBRARY_DIR=/usr/lib/hiwifi-repack
 export MODEL_NAME=
 export MAJOR_ARCH=
 export SUBMODEL=
+UBOOT_SIZE_64K=
 KERNEL_OFFSET_64K=
 SQUASHFS_OFFSET_64K=
 ENABLE_ROOT_LOGIN=N
@@ -212,10 +213,10 @@ do_firmware_repack()
 
 	case "$MODEL_NAME" in
 		HC6361|HC6341)
-			MAJOR_ARCH=ar71xx; KERNEL_OFFSET_64K=2
+			MAJOR_ARCH=ar71xx; UBOOT_SIZE_64K=1; KERNEL_OFFSET_64K=2
 			;;
 		HC5761|HC5661|HC5663)
-			MAJOR_ARCH=ralink; KERNEL_OFFSET_64K=5
+			MAJOR_ARCH=ralink; UBOOT_SIZE_64K=3; KERNEL_OFFSET_64K=5
 			;;
 		"")
 			print_help; exit 1
@@ -249,6 +250,13 @@ do_firmware_repack()
 
 	print_green ">>> Analysing source firmware: $old_romfile ..."
 
+	__uboot_to_oemparts()
+	{
+		dd if=/dev/zero bs=64k count=`expr $KERNEL_OFFSET_64K - $UBOOT_SIZE_64K` > aa.bin  2>/dev/null
+		cat $LIBRARY_DIR/$MODEL_NAME-uboot.bin aa.bin > $MODEL_NAME-oemparts.bin
+		rm -f aa.bin
+	}
+
 	# Check if firmware is in "SquashFS" type
 	local fw_magic=`cat "$old_romfile" | get_magic_word`
 	if [ "$fw_magic" = "2705" ]; then
@@ -258,12 +266,12 @@ do_firmware_repack()
 		echo "***************************************************"
 		echo ""
 		#
+		__uboot_to_oemparts
 		KERNEL_OFFSET_64K=0
-		cp -f $LIBRARY_DIR/$MODEL_NAME-oemparts.bin $MODEL_NAME-oemparts.bin
 	else
 		if [ "$UNLOCK_UBOOT" = Y ]; then
 			print_red "WARNING: Replacing U-boot with unlocked version."
-			cp -f $LIBRARY_DIR/$MODEL_NAME-oemparts.bin $MODEL_NAME-oemparts.bin
+			__uboot_to_oemparts
 		else
 			dd if="$old_romfile" bs=64k count=$KERNEL_OFFSET_64K > $MODEL_NAME-oemparts.bin
 		fi
