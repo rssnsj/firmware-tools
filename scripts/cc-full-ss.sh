@@ -28,9 +28,10 @@ esac
 
 rm -rf /tmp/opkg-lists
 opkg install $U/dnsmasq_2.71-4_${N}.ipk --force-overwrite ##--force-depends
-opkg install $K --force-depends
+opkg install $K
 opkg install $U/ipset-lists_1-20150107_${N}.ipk
 opkg install $U/shadowsocks-libev_1.6.2_${N}.ipk
 opkg install $U/shadowsocks-tools_1-20150108_${N}.ipk
+opkg install $U/p2pvtun_1-20150219_${N}.ipk
 rm -f etc/pdnsd.conf
 
