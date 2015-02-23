@@ -3,9 +3,11 @@
 if [ $# -lt 1 ]; then
 	arg0=`basename "$0"`
 	cat <<EOF
+wget http://ur.ikcd.net//HC5661-sysupgrade-20150129-318a796b.bin -O HC5661-0.9009.2.8404s-sysupgrade-20150129-318a796b.bin
 wget http://ur.ikcd.net//HC5661-sysupgrade-20141231-805e39dd.bin -O HC5661-0.9008.2.8061s-sysupgrade-20141231-805e39dd.bin
 wget http://ur.ikcd.net//HC5661-sysupgrade-20141105-3abb3bf3.bin -O HC5661-0.9007.1.7117s-sysupgrade-20141105-3abb3bf3.bin
 
+wget http://ur.ikcd.net//HC5761-sysupgrade-20150129-a6c370e3.bin -O HC5761-0.9009.2.8404s-sysupgrade-20150129-a6c370e3.bin
 wget http://ur.ikcd.net//HC5761-sysupgrade-20141231-48642891.bin -O HC5761-0.9008.2.8061s-sysupgrade-20141231-48642891.bin
 wget http://ur.ikcd.net//HC5761-sysupgrade-20141105-18eea212.bin -O HC5761-0.9007.1.7117s-sysupgrade-20141105-18eea212.bin
 
