@@ -45,7 +45,7 @@ get_magic_word()
 print_help()
 {
 	local arg0=`basename "$0"`
-cat <<EOF
+	cat <<EOF
 Usage:
  $arg0 <ROM_file> [options] ...    patch firmware <ROM_file> and repackage
  $arg0 -c                          clean temporary and target files
@@ -59,26 +59,8 @@ Options:
  -x <commands>             execute commands after all other operations
  -F                        ignore errors during modification
 
-Predefined commands:
-
 EOF
 
-	local sc
-	for sc in $LIBRARY_DIR/*.sh; do
-		[ -f "$sc" ] || continue
-		cat <<EOF
-$arg0 -w -x $sc <file_or_url>
-
-EOF
-		local romfile
-		cat $sc | awk -F= '/^SOURCE_FIRMWARE[^=]*=/{print $2}' | sed "s/^[\"']//;s/[\"']\$//" |
-		while read romfile; do
-			cat <<EOF
-$arg0 -w -x $sc '$romfile'
-
-EOF
-		done
-	done
 }
 
 modify_rootfs()
