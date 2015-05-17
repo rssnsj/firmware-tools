@@ -16,20 +16,22 @@ opkg install 6in4 6to4 curl ethtool fdisk iftop ip ip6tables-extra ip6tables-mod
 #opkg install ppp-mod-pppol2tp || :
 opkg install ppp-mod-pptp || :
 opkg install luci-i18n-base-zh-cn luci-i18n-commands-zh-cn luci-i18n-diag-core-zh-cn luci-i18n-firewall-zh-cn luci-i18n-qos-zh-cn luci-i18n-samba-zh-cn
+
 opkg install kmod-ath10k
+rm -vf lib/firmware/ath10k/QCA988X/hw2.0/firmware-4.bin
+wget http://rssn.cn/ar71xx/ath10k/firmware-2.bin -O lib/firmware/ath10k/QCA988X/hw2.0/firmware-2.bin
 
 opkg install http://downloads.openwrt.org/barrier_breaker/14.07/ar71xx/generic/packages/oldpackages/pdnsd_1.2.9a-par-a8e46ccba7b0fa2230d6c42ab6dcd92926f6c21d_ar71xx.ipk
 opkg install ipset-lists minivtun shadowsocks-libev shadowsocks-tools
 opkg install dnsmasq-full --force-overwrite
-
 cat >> etc/uci-defaults/disable-pdnsd <<EOF
 #!/bin/sh
 [ -x /etc/init.d/pdnsd ] && /etc/init.d/pdnsd disable
 EOF
 chmod 755 etc/uci-defaults/disable-pdnsd
-
 rm -vf etc/opkg/rssnsj.conf
 rmdir etc/opkg 2>/dev/null || :
 
+exit 0
 '
 

@@ -21,15 +21,14 @@ opkg install 6in4 6to4 curl ethtool fdisk iftop ip ip6tables-extra ip6tables-mod
 
 opkg install pdnsd ipset-lists minivtun shadowsocks-libev shadowsocks-tools
 opkg install dnsmasq-full --force-overwrite
-
 cat >> etc/uci-defaults/disable-pdnsd <<EOF
 #!/bin/sh
 [ -x /etc/init.d/pdnsd ] && /etc/init.d/pdnsd disable
 EOF
 chmod 755 etc/uci-defaults/disable-pdnsd
-
 rm -vf etc/opkg/rssnsj.conf
 rmdir etc/opkg 2>/dev/null || :
 
+exit 0
 '
 
