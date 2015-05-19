@@ -1,5 +1,6 @@
 
 SDK_AR71XX_BB ?= OpenWrt-SDK-ar71xx-for-linux-x86_64-gcc-4.8-linaro_uClibc-0.9.33.2
+SDK_AR71XX_CC ?= OpenWrt-SDK-ar71xx-generic_gcc-4.8-linaro_uClibc-0.9.33.2.Linux-x86_64
 ifneq ($(SDK),)
 	SDK_AR71XX_BB := $(SDK)
 endif
@@ -25,9 +26,84 @@ PACKAGES_MEDIUM_BB := kmod-usb-storage kmod-fs-ext4 kmod-fs-vfat kmod-sit kmod-i
 	kmod-nls-iso8859-1 libevent2 pptpd xl2tpd ntfs-3g ntfs-3g-utils luci luci-app-samba luci-proto-ipv6 \
 	openvpn-openssl ipset tcpdump iftop iperf-mt
 
+PACKAGES_FULL_CC := 6in4 6to4 curl ethtool fdisk iftop ip ip6tables-extra ip6tables-mod-nat iperf-mt ipset \
+	iptables-mod-conntrack-extra iptables-mod-extra iptables-mod-ipopt iptables-mod-lua iptables-mod-nat-extra \
+	kmod-crypto-des kmod-crypto-ecb kmod-crypto-hmac kmod-crypto-manager kmod-crypto-md4 kmod-crypto-md5 \
+	kmod-crypto-pcompress kmod-crypto-sha1 kmod-crypto-sha256 kmod-dnsresolver kmod-fs-autofs4 kmod-fs-cifs \
+	kmod-gre kmod-ip6-tunnel kmod-ip6tables-extra kmod-ipip kmod-ipt-conntrack-extra kmod-ipt-extra \
+	kmod-ipt-ipopt kmod-ipt-ipset kmod-ipt-nat-extra kmod-ipt-nat6 kmod-iptunnel kmod-iptunnel4 kmod-iptunnel6 \
+	kmod-leds-gpio kmod-ledtrig-default-on kmod-ledtrig-netdev kmod-ledtrig-timer kmod-ledtrig-usbdev \
+	kmod-lib-textsearch kmod-macvlan kmod-mppe kmod-nfnetlink kmod-pptp kmod-sit kmod-tun libblkid libcurl \
+	libdaemon libevent2 liblzo libmnl libncurses libopenssl libpcap libpolarssl libpthread luci-app-samba \
+	luci-lib-json luci-proto-ipv6 luci-proto-relay openvpn-openssl relayd resolveip samba36-server tcpdump \
+	terminfo zlib \
+	luci-i18n-base-zh-cn luci-i18n-commands-zh-cn luci-i18n-diag-core-zh-cn luci-i18n-firewall-zh-cn \
+	luci-i18n-qos-zh-cn luci-i18n-samba-zh-cn \
+	ppp-mod-pptp ppp-mod-pppol2tp
+PACKAGES_URLS_CC := http://downloads.openwrt.org/barrier_breaker/14.07/ar71xx/generic/packages/oldpackages/pdnsd_1.2.9a-par-a8e46ccba7b0fa2230d6c42ab6dcd92926f6c21d_ar71xx.ipk
+
 PACKAGES_FEEDS := ipset-lists minivtun shadowsocks-libev shadowsocks-tools kmod-proto-bridge kmod-yavlan
 
+# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
+# Generic method of creating firmware with the built components
+# $1: Firmware download URL
+# $2: Packages to install
+# $3: Package URLs to install
+define DownloadRepackGeneric
+	[ -f `basename $(1)` ] || wget -4 $(1)
+	openwrt-repack.sh `basename $(1)` -x \
+"set -e; \
+mkdir -p etc/opkg; cp $(shell pwd)/rssnsj.conf etc/opkg/; \
+opkg update; opkg install $(2); \
+opkg install dnsmasq-full --force-overwrite; \
+for p in $(3); do opkg install \$$p; done; \
+echo '#!/bin/sh' > etc/uci-defaults/disable-pdnsd; \
+echo '[ -x /etc/init.d/pdnsd ] && /etc/init.d/pdnsd disable' >> etc/uci-defaults/disable-pdnsd; \
+chmod 755 etc/uci-defaults/disable-pdnsd; \
+rm -vf etc/opkg/rssnsj.conf; rmdir etc/opkg 2>/dev/null || :; \
+exit 0; \
+"
+endef
+
+# Qihoo-C301 only
+# $1: Firmware download URL
+# $2: Packages to install
+# $3: Package URLs to install
+define DownloadRepackQihooC301
+	[ -f `basename $(1)` ] || wget -4 $(1)
+	openwrt-repack.sh `basename $(1)` -x \
+"set -e; \
+mkdir -p etc/opkg; cp $(shell pwd)/rssnsj.conf etc/opkg/; \
+opkg update; opkg install $(2); \
+opkg install dnsmasq-full --force-overwrite; \
+opkg install kmod-ath10k; \
+rm -vf lib/firmware/ath10k/QCA988X/hw2.0/firmware-4.bin; \
+cp -vf $(shell pwd)/files/ath10k/firmware-2.bin lib/firmware/ath10k/QCA988X/hw2.0/firmware-2.bin; \
+for p in $(3); do opkg install \$$p; done; \
+echo '#!/bin/sh' > etc/uci-defaults/disable-pdnsd; \
+echo '[ -x /etc/init.d/pdnsd ] && /etc/init.d/pdnsd disable' >> etc/uci-defaults/disable-pdnsd; \
+chmod 755 etc/uci-defaults/disable-pdnsd; \
+rm -vf etc/opkg/rssnsj.conf; rmdir etc/opkg 2>/dev/null || :; \
+exit 0; \
+"
+endef
+
+# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+help:
+	@echo "Usage:"
+	@echo "  make <model> [SDK=...]"
+
+hiwifi-hc6361: .feeds_ar71xx_bb
+	$(call DownloadRepackGeneric, http://downloads.openwrt.org/barrier_breaker/14.07/ar71xx/generic/openwrt-ar71xx-generic-hiwifi-hc6361-squashfs-sysupgrade.bin, $(PACKAGES_FULL_BB) $(PACKAGES_FEEDS))
+
+tl-wr703n: .feeds_ar71xx_bb
+	$(call DownloadRepackGeneric, http://downloads.openwrt.org/barrier_breaker/14.07/ar71xx/generic/openwrt-ar71xx-generic-tl-wr703n-v1-squashfs-sysupgrade.bin, $(PACKAGES_MEDIUM_BB) $(PACKAGES_FEEDS))
+
+qihoo-c301: .feeds_ar71xx_cc
+	$(call DownloadRepackQihooC301, http://downloads.openwrt.org/snapshots/trunk/ar71xx/generic/openwrt-ar71xx-generic-qihoo-c301-squashfs-sysupgrade.bin, $(PACKAGES_FULL_CC) $(PACKAGES_FEEDS), $(PACKAGES_URLS_CC))
+
+# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 define BuildFeedsWithSDK
 	@if ! [ -n "$(1)" -a -d "$(1)/package" ]; then \
 		echo "Please specify a valid OpenWrt SDK directory by adding \"SDK=...\"."; \
@@ -45,42 +121,17 @@ define BuildFeedsWithSDK
 	echo "src rssnsj file:$(shell cd $(1) 2>/dev/null && pwd)/bin/ar71xx/packages" > rssnsj.conf
 endef
 
-#
-# $1: Firmware download URL
-# $2: Packages to install
-#
-define DownloadRepackBB
-	[ -f `basename $(1)` ] || wget -4 $(1)
-	openwrt-repack.sh `basename $(1)` -x \
-"set -e; \
-mkdir -p etc/opkg; cp $(shell pwd)/rssnsj.conf etc/opkg/; \
-opkg update; opkg install $(2); \
-opkg install dnsmasq-full --force-overwrite; \
-echo '#!/bin/sh' > etc/uci-defaults/disable-pdnsd; \
-echo '[ -x /etc/init.d/pdnsd ] && /etc/init.d/pdnsd disable' >> etc/uci-defaults/disable-pdnsd; \
-chmod 755 etc/uci-defaults/disable-pdnsd; \
-rm -vf etc/opkg/rssnsj.conf; rmdir etc/opkg 2>/dev/null || :; \
-exit 0; \
-"
-endef
-
-
-help:
-	@echo "Usage:"
-	@echo "  make <model> [SDK=...]"
-
-hiwifi-hc6361: .feeds_ar71xx_bb
-	$(call DownloadRepackBB, http://downloads.openwrt.org/barrier_breaker/14.07/ar71xx/generic/openwrt-ar71xx-generic-hiwifi-hc6361-squashfs-sysupgrade.bin, $(PACKAGES_FULL_BB) $(PACKAGES_FEEDS))
-
-tl-wr703n:
-	$(call DownloadRepackBB, http://downloads.openwrt.org/barrier_breaker/14.07/ar71xx/generic/openwrt-ar71xx-generic-tl-wr703n-v1-squashfs-sysupgrade.bin, $(PACKAGES_MEDIUM_BB) $(PACKAGES_FEEDS))
-
 .feeds_ar71xx_bb:
 	$(call BuildFeedsWithSDK,$(SDK_AR71XX_BB))
 	touch $@
+.feeds_ar71xx_cc:
+	$(call BuildFeedsWithSDK,$(SDK_AR71XX_CC))
+	touch $@
 
+# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 extract:
 	tar jxvf /var/dl/OpenWrt-SDK-ar71xx-for-linux-x86_64-gcc-4.8-linaro_uClibc-0.9.33.2.tar.bz2
+	tar jxvf /var/dl/OpenWrt-SDK-ar71xx-generic_gcc-4.8-linaro_uClibc-0.9.33.2.Linux-x86_64.tar.bz2
 
 clean:
 	openwrt-repack.sh -c
