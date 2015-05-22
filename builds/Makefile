@@ -42,7 +42,7 @@ PACKAGES_FULL_CC := 6in4 6to4 curl ethtool fdisk iftop ip ip6tables-extra ip6tab
 	ppp-mod-pptp ppp-mod-pppol2tp
 PACKAGES_URLS_CC := http://downloads.openwrt.org/barrier_breaker/14.07/ar71xx/generic/packages/oldpackages/pdnsd_1.2.9a-par-a8e46ccba7b0fa2230d6c42ab6dcd92926f6c21d_ar71xx.ipk
 
-PACKAGES_FEEDS := ipset-lists minivtun shadowsocks-libev shadowsocks-tools kmod-proto-bridge kmod-yavlan
+PACKAGES_FEEDS := ipset-lists minivtun shadowsocks-libev shadowsocks-tools file-storage kmod-proto-bridge kmod-yavlan
 
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
@@ -116,6 +116,7 @@ define BuildFeedsWithSDK
 	make package/shadowsocks-libev/compile V=s -C "$(1)"
 	make package/shadowsocks-tools/compile V=s -C "$(1)"
 	make package/minivtun-tools/compile V=s -C "$(1)"
+	make package/file-storage/compile V=s -C "$(1)"
 	make package/proto-bridge/compile V=s -C "$(1)"
 	cd "$(1)/bin/ar71xx/packages" && ../../../scripts/ipkg-make-index.sh . > Packages && gzip -9c Packages > Packages.gz
 	echo "src rssnsj file:$(shell cd $(1) 2>/dev/null && pwd)/bin/ar71xx/packages" > rssnsj.conf
