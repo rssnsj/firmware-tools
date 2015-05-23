@@ -5,44 +5,48 @@ ifneq ($(SDK),)
 	SDK_AR71XX_BB := $(SDK)
 endif
 
-PACKAGES_FULL_BB := 6in4 6to4 blkid curl ethtool iftop ip ip6tables-extra ip6tables-mod-nat iperf-mt ipset \
-	iptables-mod-conntrack-extra iptables-mod-extra iptables-mod-filter iptables-mod-ipopt iptables-mod-nat-extra \
-	iwinfo kmod-crypto-deflate kmod-crypto-des kmod-crypto-ecb kmod-crypto-hmac kmod-crypto-manager \
-	kmod-crypto-md4 kmod-crypto-md5 kmod-crypto-pcompress kmod-crypto-sha1 kmod-crypto-sha256 kmod-dnsresolver \
-	kmod-fs-cifs kmod-fs-hfs kmod-fs-nfs kmod-fs-nfs-common kmod-fs-ntfs kmod-fs-vfat kmod-fuse kmod-gre kmod-ifb \
-	kmod-ip6-tunnel kmod-ip6tables-extra kmod-ipip kmod-ipt-conntrack-extra kmod-ipt-extra kmod-ipt-filter \
-	kmod-ipt-ipopt kmod-ipt-ipset kmod-ipt-nat-extra kmod-ipt-nat6 kmod-ipt-nathelper-extra kmod-iptunnel \
-	kmod-iptunnel4 kmod-iptunnel6 kmod-l2tp kmod-ledtrig-gpio kmod-lib-textsearch kmod-lib-zlib kmod-macvlan \
-	kmod-mppe kmod-nfnetlink kmod-nls-cp437 kmod-nls-iso8859-1 kmod-nls-utf8 kmod-pppol2tp kmod-pptp \
-	kmod-sched-connmark kmod-sched-core kmod-sit kmod-tun kmod-usb-ohci kmod-usb-printer libcurl libdaemon \
-	libevent2 libiwinfo libiwinfo-lua libjson liblua liblzo libmnl libncurses libopenssl libpcap libpolarssl \
-	libpthread librt libubus-lua libuci-lua lua luci luci-app-firewall luci-app-qos luci-app-samba luci-base \
-	luci-i18n-chinese luci-i18n-english luci-lib-json luci-lib-nixio luci-mod-admin-full luci-proto-ipv6 \
-	luci-proto-ppp luci-proto-relay luci-theme-bootstrap ntfs-3g openvpn-openssl ppp-mod-pppol2tp ppp-mod-pptp \
-	qos-scripts relayd resolveip samba36-server tc tcpdump terminfo uclibcxx uhttpd uhttpd-mod-ubus zlib \
-	pdnsd pptpd xl2tpd
+PACKAGES_FULL_BB := 6in4 6to4 blkid curl ethtool ip ip6tables-extra ip6tables-mod-nat ipset \
+	iptables-mod-conntrack-extra iptables-mod-extra iptables-mod-filter iptables-mod-ipopt \
+	iptables-mod-nat-extra iwinfo kmod-crypto-deflate kmod-crypto-des kmod-crypto-ecb \
+	kmod-crypto-hmac kmod-crypto-manager kmod-crypto-md4 kmod-crypto-md5 kmod-crypto-pcompress \
+	kmod-crypto-sha1 kmod-crypto-sha256 kmod-dnsresolver kmod-fs-cifs kmod-fs-ext4 kmod-fs-hfs \
+	kmod-fs-nfs kmod-fs-nfs-common kmod-fs-ntfs kmod-fs-vfat kmod-fuse kmod-gre kmod-ifb \
+	kmod-ip6-tunnel kmod-ip6tables-extra kmod-ipip kmod-ipt-conntrack-extra kmod-ipt-extra \
+	kmod-ipt-filter kmod-ipt-ipopt kmod-ipt-ipset kmod-ipt-nat-extra kmod-ipt-nat6 \
+	kmod-ipt-nathelper-extra kmod-iptunnel kmod-iptunnel4 kmod-iptunnel6 kmod-l2tp \
+	kmod-ledtrig-gpio kmod-lib-textsearch kmod-lib-zlib kmod-macvlan kmod-mppe kmod-nfnetlink \
+	kmod-nls-cp437 kmod-nls-iso8859-1 kmod-nls-utf8 kmod-pppol2tp kmod-pptp kmod-sched-connmark \
+	kmod-sched-core kmod-sit kmod-tun kmod-usb-ohci kmod-usb-printer kmod-usb-storage libcurl \
+	libdaemon libevent2 libiwinfo libiwinfo-lua libjson liblua liblzo libmnl libncurses \
+	libopenssl libpolarssl libpthread librt libubus-lua libuci-lua lua luci luci-app-firewall \
+	luci-app-qos luci-app-samba luci-base luci-i18n-chinese luci-i18n-english luci-lib-json \
+	luci-lib-nixio luci-mod-admin-full luci-proto-ipv6 luci-proto-ppp luci-proto-relay \
+	luci-theme-bootstrap ntfs-3g openvpn-openssl ppp-mod-pppol2tp ppp-mod-pptp qos-scripts \
+	resolveip samba36-server tc terminfo uhttpd uhttpd-mod-ubus zlib pdnsd pptpd xl2tpd
 
-PACKAGES_MEDIUM_BB := kmod-usb-storage kmod-fs-ext4 kmod-fs-vfat kmod-sit kmod-ipip kmod-gre kmod-nls-cp437 \
-	kmod-nls-iso8859-1 libevent2 pptpd xl2tpd ntfs-3g ntfs-3g-utils luci luci-app-samba luci-proto-ipv6 \
-	openvpn-openssl ipset tcpdump iftop iperf-mt
+PACKAGES_MEDIUM_BB := kmod-usb-storage kmod-fs-ext4 kmod-fs-vfat kmod-sit kmod-ipip kmod-gre \
+	kmod-nls-cp437 kmod-nls-iso8859-1 libevent2 pptpd xl2tpd ntfs-3g ntfs-3g-utils luci \
+	luci-app-samba luci-proto-ipv6 openvpn-openssl ipset
 
-PACKAGES_FULL_CC := 6in4 6to4 curl ethtool fdisk iftop ip ip6tables-extra ip6tables-mod-nat iperf-mt ipset \
-	iptables-mod-conntrack-extra iptables-mod-extra iptables-mod-ipopt iptables-mod-lua iptables-mod-nat-extra \
-	kmod-crypto-des kmod-crypto-ecb kmod-crypto-hmac kmod-crypto-manager kmod-crypto-md4 kmod-crypto-md5 \
-	kmod-crypto-pcompress kmod-crypto-sha1 kmod-crypto-sha256 kmod-dnsresolver kmod-fs-autofs4 kmod-fs-cifs \
-	kmod-gre kmod-ip6-tunnel kmod-ip6tables-extra kmod-ipip kmod-ipt-conntrack-extra kmod-ipt-extra \
-	kmod-ipt-ipopt kmod-ipt-ipset kmod-ipt-nat-extra kmod-ipt-nat6 kmod-iptunnel kmod-iptunnel4 kmod-iptunnel6 \
-	kmod-leds-gpio kmod-ledtrig-default-on kmod-ledtrig-netdev kmod-ledtrig-timer kmod-ledtrig-usbdev \
-	kmod-lib-textsearch kmod-macvlan kmod-mppe kmod-nfnetlink kmod-pptp kmod-sit kmod-tun libblkid libcurl \
-	libdaemon libevent2 liblzo libmnl libncurses libopenssl libpcap libpolarssl libpthread luci-app-samba \
-	luci-lib-json luci-proto-ipv6 luci-proto-relay openvpn-openssl relayd resolveip samba36-server tcpdump \
-	terminfo zlib \
-	luci-i18n-base-zh-cn luci-i18n-commands-zh-cn luci-i18n-diag-core-zh-cn luci-i18n-firewall-zh-cn \
-	luci-i18n-qos-zh-cn luci-i18n-samba-zh-cn \
+PACKAGES_FULL_CC := 6in4 6to4 blkid curl ethtool fdisk ip ip6tables-extra ip6tables-mod-nat \
+	ipset iptables-mod-conntrack-extra iptables-mod-extra iptables-mod-ipopt iptables-mod-lua \
+	iptables-mod-nat-extra kmod-crypto-des kmod-crypto-ecb kmod-crypto-hmac kmod-crypto-manager \
+	kmod-crypto-md4 kmod-crypto-md5 kmod-crypto-pcompress kmod-crypto-sha1 kmod-crypto-sha256 \
+	kmod-dnsresolver kmod-fs-ext4 kmod-fs-vfat kmod-fs-autofs4 kmod-fs-cifs kmod-fuse kmod-gre \
+	kmod-ip6-tunnel kmod-ip6tables-extra kmod-ipip kmod-ipt-conntrack-extra kmod-ipt-extra \
+	kmod-ipt-ipopt kmod-ipt-ipset kmod-ipt-nat-extra kmod-ipt-nat6 kmod-iptunnel kmod-iptunnel4 \
+	kmod-iptunnel6 kmod-leds-gpio kmod-ledtrig-default-on kmod-ledtrig-netdev \
+	kmod-ledtrig-timer kmod-ledtrig-usbdev kmod-lib-textsearch kmod-macvlan kmod-mppe \
+	kmod-nfnetlink kmod-pptp kmod-sit kmod-tun kmod-usb-storage libblkid libcurl libdaemon \
+	libevent2 liblzo libmnl libncurses libopenssl libpolarssl libpthread luci-app-samba \
+	luci-lib-json luci-proto-ipv6 luci-proto-relay ntfs-3g openvpn-openssl resolveip \
+	samba36-server terminfo zlib luci-i18n-base-zh-cn luci-i18n-commands-zh-cn \
+	luci-i18n-diag-core-zh-cn luci-i18n-firewall-zh-cn luci-i18n-qos-zh-cn luci-i18n-samba-zh-cn \
 	ppp-mod-pptp ppp-mod-pppol2tp
 PACKAGES_URLS_CC := http://downloads.openwrt.org/barrier_breaker/14.07/ar71xx/generic/packages/oldpackages/pdnsd_1.2.9a-par-a8e46ccba7b0fa2230d6c42ab6dcd92926f6c21d_ar71xx.ipk
 
-PACKAGES_FEEDS := ipset-lists minivtun shadowsocks-libev shadowsocks-tools file-storage kmod-proto-bridge kmod-yavlan
+PACKAGES_FEEDS := ipset-lists minivtun shadowsocks-libev shadowsocks-tools file-storage \
+	kmod-proto-bridge kmod-yavlan
 
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
@@ -124,10 +128,8 @@ endef
 
 .feeds_ar71xx_bb:
 	$(call BuildFeedsWithSDK,$(SDK_AR71XX_BB))
-	touch $@
 .feeds_ar71xx_cc:
 	$(call BuildFeedsWithSDK,$(SDK_AR71XX_CC))
-	touch $@
 
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 extract:
