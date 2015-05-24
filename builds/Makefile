@@ -43,7 +43,7 @@ PACKAGES_FULL_CC := 6in4 6to4 blkid curl ethtool fdisk ip ip6tables-extra ip6tab
 	samba36-server terminfo zlib luci-i18n-base-zh-cn luci-i18n-commands-zh-cn \
 	luci-i18n-diag-core-zh-cn luci-i18n-firewall-zh-cn luci-i18n-qos-zh-cn luci-i18n-samba-zh-cn \
 	ppp-mod-pptp ppp-mod-pppol2tp kmod-nls-cp437 kmod-nls-iso8859-1 kmod-nls-utf8 \
-	kmod-crypto-deflate kmod-usb-ohci kmod-usb-printer
+	kmod-crypto-deflate kmod-usb-ohci kmod-usb-printer kmod-nf-nathelper kmod-nf-nathelper-extra
 PACKAGES_URLS_CC := http://downloads.openwrt.org/barrier_breaker/14.07/ar71xx/generic/packages/oldpackages/pdnsd_1.2.9a-par-a8e46ccba7b0fa2230d6c42ab6dcd92926f6c21d_ar71xx.ipk
 
 PACKAGES_FEEDS := ipset-lists minivtun shadowsocks-libev shadowsocks-tools file-storage \
