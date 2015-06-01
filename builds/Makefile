@@ -134,8 +134,8 @@ endef
 
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 extract:
-	tar jxvf /var/dl/OpenWrt-SDK-ar71xx-for-linux-x86_64-gcc-4.8-linaro_uClibc-0.9.33.2.tar.bz2
-	tar jxvf /var/dl/OpenWrt-SDK-ar71xx-generic_gcc-4.8-linaro_uClibc-0.9.33.2.Linux-x86_64.tar.bz2
+	tar jxvf /var/dl/$(SDK_AR71XX_BB).tar.bz2
+	tar jxvf /var/dl/$(SDK_AR71XX_CC).tar.bz2
 
 clean:
 	openwrt-repack.sh -c
