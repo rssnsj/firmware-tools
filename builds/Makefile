@@ -122,6 +122,7 @@ define BuildFeedsWithSDK
 	make package/shadowsocks-tools/compile V=s -C "$(1)"
 	make package/minivtun-tools/compile V=s -C "$(1)"
 	make package/file-storage/compile V=s -C "$(1)"
+	make package/dnspod-utils/compile V=s -C "$(1)"
 	make package/proto-bridge/compile V=s -C "$(1)"
 	cd "$(1)/bin/ar71xx/packages" && ../../../scripts/ipkg-make-index.sh . > Packages && gzip -9c Packages > Packages.gz
 	echo "src rssnsj file:$(shell cd $(1) 2>/dev/null && pwd)/bin/ar71xx/packages" > rssnsj.conf
