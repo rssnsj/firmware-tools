@@ -99,6 +99,8 @@ help:
 	@echo "Usage:"
 	@echo "  make <model> [SDK=...]"
 
+all: hiwifi-hc6361 qihoo-c301
+
 hiwifi-hc6361: .feeds_ar71xx_bb
 	$(call DownloadRepackGeneric, http://downloads.openwrt.org/barrier_breaker/14.07/ar71xx/generic/openwrt-ar71xx-generic-hiwifi-hc6361-squashfs-sysupgrade.bin, $(PACKAGES_FULL_BB) $(PACKAGES_FEEDS))
 
