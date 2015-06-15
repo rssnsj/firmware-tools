@@ -26,7 +26,8 @@ PACKAGES_FULL_BB := 6in4 6to4 blkid curl ethtool ip ip6tables-extra ip6tables-mo
 
 PACKAGES_MEDIUM_BB := kmod-usb-storage kmod-fs-ext4 kmod-fs-vfat kmod-sit kmod-ipip kmod-gre \
 	kmod-nls-cp437 kmod-nls-iso8859-1 libevent2 pptpd xl2tpd ntfs-3g ntfs-3g-utils luci \
-	luci-app-samba luci-proto-ipv6 openvpn-openssl ipset
+	luci-app-samba luci-proto-ipv6 openvpn-openssl ipset kmod-ipt-nathelper-extra \
+	kmod-ipt-nat-extra
 
 PACKAGES_FULL_CC := 6in4 6to4 blkid curl ethtool fdisk ip ip6tables-extra ip6tables-mod-nat \
 	ipset iptables-mod-conntrack-extra iptables-mod-extra iptables-mod-ipopt iwinfo \
@@ -57,7 +58,7 @@ PACKAGES_FEEDS := ipset-lists minivtun shadowsocks-libev shadowsocks-tools file-
 # $3: Package URLs to install
 define DownloadRepackGeneric
 	[ -f `basename $(1)` ] || wget -4 $(1)
-	openwrt-repack.sh `basename $(1)` -x \
+	openwrt-repack.sh `basename $(1)` -w -x \
 "set -e; \
 mkdir -p etc/opkg; cp $(shell pwd)/rssnsj.conf etc/opkg/; \
 opkg update; opkg install $(2); \
@@ -77,7 +78,7 @@ endef
 # $3: Package URLs to install
 define DownloadRepackQihooC301
 	[ -f `basename $(1)` ] || wget -4 $(1)
-	openwrt-repack.sh `basename $(1)` -x \
+	openwrt-repack.sh `basename $(1)` -w -x \
 "set -e; \
 mkdir -p etc/opkg; cp $(shell pwd)/rssnsj.conf etc/opkg/; \
 opkg update; opkg install $(2); \
@@ -106,10 +107,10 @@ all:
 
 hiwifi-hc6361: .feeds_ar71xx_bb
 	$(call DownloadRepackGeneric, http://downloads.openwrt.org/barrier_breaker/14.07/ar71xx/generic/openwrt-ar71xx-generic-hiwifi-hc6361-squashfs-sysupgrade.bin, $(PACKAGES_FULL_BB) $(PACKAGES_FEEDS))
-
 tl-wr703n: .feeds_ar71xx_bb
 	$(call DownloadRepackGeneric, http://downloads.openwrt.org/barrier_breaker/14.07/ar71xx/generic/openwrt-ar71xx-generic-tl-wr703n-v1-squashfs-sysupgrade.bin, $(PACKAGES_MEDIUM_BB) $(PACKAGES_FEEDS))
-
+tl-mr11u: .feeds_ar71xx_bb
+	$(call DownloadRepackGeneric, http://downloads.openwrt.org/barrier_breaker/14.07/ar71xx/generic/openwrt-ar71xx-generic-tl-mr11u-v2-squashfs-sysupgrade.bin, $(PACKAGES_MEDIUM_BB) $(PACKAGES_FEEDS))
 qihoo-c301: .feeds_ar71xx_cc
 	$(call DownloadRepackQihooC301, http://downloads.openwrt.org/snapshots/trunk/ar71xx/generic/openwrt-ar71xx-generic-qihoo-c301-squashfs-sysupgrade.bin, $(PACKAGES_FULL_CC) $(PACKAGES_FEEDS), $(PACKAGES_URLS_CC))
 
