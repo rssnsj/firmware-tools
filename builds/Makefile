@@ -1,6 +1,6 @@
 
 SDK_AR71XX_BB ?= OpenWrt-SDK-ar71xx-for-linux-x86_64-gcc-4.8-linaro_uClibc-0.9.33.2
-SDK_AR71XX_CC ?= OpenWrt-SDK-ar71xx-generic_gcc-4.8-linaro_uClibc-0.9.33.2.Linux-x86_64
+SDK_AR71XX_CC ?= OpenWrt-SDK-ar71xx-generic_gcc-4.8-linaro_musl-1.1.10.Linux-x86_64
 ifneq ($(SDK),)
 	SDK_AR71XX_BB := $(SDK)
 endif
