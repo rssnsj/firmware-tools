@@ -1,6 +1,6 @@
 
 SDK_AR71XX_BB ?= OpenWrt-SDK-ar71xx-for-linux-x86_64-gcc-4.8-linaro_uClibc-0.9.33.2
-SDK_AR71XX_CC ?= OpenWrt-SDK-ar71xx-generic_gcc-4.8-linaro_musl-1.1.10.Linux-x86_64
+SDK_AR71XX_CC ?= OpenWrt-SDK-15.05-rc2-ar71xx-generic_gcc-4.8-linaro_uClibc-0.9.33.2.Linux-x86_64
 ifneq ($(SDK),)
 	SDK_AR71XX_BB := $(SDK)
 endif
@@ -43,8 +43,9 @@ PACKAGES_FULL_CC := 6in4 6to4 blkid curl ethtool fdisk ip ip6tables-extra ip6tab
 	libevent2 liblzo libmnl libncurses libopenssl libpolarssl libpthread luci-app-samba \
 	luci-lib-json luci-proto-ipv6 luci-proto-relay luci-i18n-diag-core-zh-cn \
 	luci-i18n-firewall-zh-cn luci-i18n-samba-zh-cn zlib luci-i18n-base-zh-cn \
-	luci-i18n-commands-zh-cn ntfs-3g openvpn-openssl resolveip samba36-server terminfo pptpd \
+	luci-i18n-commands-zh-cn ntfs-3g openvpn-openssl resolveip samba36-server terminfo \
 	xl2tpd ppp-mod-pptp ppp-mod-pppol2tp kmod-nls-cp437 kmod-nls-iso8859-1 kmod-nls-utf8
+	### pptpd
 PACKAGES_URLS_CC := http://downloads.openwrt.org/barrier_breaker/14.07/ar71xx/generic/packages/oldpackages/pdnsd_1.2.9a-par-a8e46ccba7b0fa2230d6c42ab6dcd92926f6c21d_ar71xx.ipk
 
 PACKAGES_FEEDS := ipset-lists minivtun shadowsocks-libev shadowsocks-tools file-storage \
@@ -113,7 +114,7 @@ tl-wr703n: .feeds_ar71xx_bb
 tl-mr11u: .feeds_ar71xx_bb
 	$(call DownloadRepackGeneric, http://downloads.openwrt.org/barrier_breaker/14.07/ar71xx/generic/openwrt-ar71xx-generic-tl-mr11u-v2-squashfs-sysupgrade.bin, $(PACKAGES_MEDIUM_BB) $(PACKAGES_FEEDS))
 qihoo-c301: .feeds_ar71xx_cc
-	$(call DownloadRepackQihooC301, http://downloads.openwrt.org/snapshots/trunk/ar71xx/generic/openwrt-ar71xx-generic-qihoo-c301-squashfs-sysupgrade.bin, $(PACKAGES_FULL_CC) $(PACKAGES_FEEDS), $(PACKAGES_URLS_CC))
+	$(call DownloadRepackQihooC301, http://downloads.openwrt.org/chaos_calmer/15.05-rc2/ar71xx/generic/openwrt-15.05-rc2-ar71xx-generic-qihoo-c301-squashfs-sysupgrade.bin, $(PACKAGES_FULL_CC) $(PACKAGES_FEEDS), $(PACKAGES_URLS_CC))
 
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 define BuildFeedsWithSDK
