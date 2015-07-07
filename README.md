@@ -6,7 +6,7 @@ OpenWrt firmware patching and repackaging tools - HiWiFi only
 ### Installation
 
     # Install required software
-    sudo apt-get install build-essential autoconf libtool liblzma-dev libglib2.0-dev  # for Ubuntu
+    sudo apt-get install build-essential autoconf automake libtool liblzma-dev libglib2.0-dev  # for Ubuntu
     ## sudo yum install gcc make autoconf libtool xz-devel glib2-devel  # for CentOS
       
     # Compile utilities and install
