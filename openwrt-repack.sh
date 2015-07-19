@@ -84,6 +84,7 @@ modify_rootfs()
 
 	# Enable wireless on first startup
 	if [ "$ENABLE_WIRELESS" = Y ]; then
+		print_red "WARNING: Enabled wireless by default."
 		sed -i '/option \+disabled \+1/d;/# *REMOVE THIS LINE/d' lib/wifi/mac80211.sh
 	fi
 
