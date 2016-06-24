@@ -112,7 +112,7 @@ hiwifi-hc6361: .feeds_ar71xx_bb
 tl-wr703n: .feeds_ar71xx_bb
 	$(call DownloadRepackGeneric, http://downloads.openwrt.org/barrier_breaker/14.07/ar71xx/generic/openwrt-ar71xx-generic-tl-wr703n-v1-squashfs-sysupgrade.bin, $(PACKAGES_FULL_BB) $(PACKAGES_FEEDS))
 tl-mr11u: .feeds_ar71xx_bb
-	$(call DownloadRepackGeneric, http://downloads.openwrt.org/barrier_breaker/14.07/ar71xx/generic/openwrt-ar71xx-generic-tl-mr11u-v2-squashfs-sysupgrade.bin, $(PACKAGES_MEDIUM_BB) $(PACKAGES_FEEDS))
+	$(call DownloadRepackGeneric, http://downloads.openwrt.org/barrier_breaker/14.07/ar71xx/generic/openwrt-ar71xx-generic-tl-mr11u-v2-squashfs-sysupgrade.bin, $(PACKAGES_MEDIUM_BB))
 qihoo-c301: .feeds_ar71xx_cc
 	$(call DownloadRepackQihooC301, http://downloads.openwrt.org/chaos_calmer/15.05/ar71xx/generic/openwrt-15.05-ar71xx-generic-qihoo-c301-squashfs-sysupgrade.bin, $(PACKAGES_FULL_CC) $(PACKAGES_FEEDS), $(PACKAGES_URLS_CC))
 
