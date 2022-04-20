@@ -5,3 +5,4 @@ src/padjffs2/padjffs2
 src/squashfs-tools/mksquashfs
 src/squashfs-tools/unsquashfs
 
+.DS_Store

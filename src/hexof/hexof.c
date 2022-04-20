@@ -11,8 +11,8 @@ static inline int is_hex(char c)
 		(c >= 'a' && c <= 'f');
 }
 
-/* memmem(): A strstr() work-alike for non-text buffers */
-static inline void *memmem(const void *s1, const void *s2, size_t len1, size_t len2)
+/* _memmem(): A strstr() work-alike for non-text buffers */
+static inline void *_memmem(const void *s1, const void *s2, size_t len1, size_t len2)
 {
 	char *bf = (char *)s1, *pt = (char *)s2;
 	size_t i, j;
@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
 	}
 
 	/* Get offset of the pattern in file. */
-	patt_pos = memmem(file_data + start_offset, pattern, file_len - start_offset, patt_len);
+	patt_pos = _memmem(file_data + start_offset, pattern, file_len - start_offset, patt_len);
 	free(file_data);
 	if (patt_pos) {
 		printf("%lu\n", (unsigned long)(patt_pos - file_data));
